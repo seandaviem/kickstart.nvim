@@ -102,13 +102,18 @@ vim.g.have_nerd_font = false
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
-vim.opt.relativenumber = true
+vim.opt.relativenumber = false
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
 
 -- Don't show the mode, since it's already in the status line
 vim.opt.showmode = false
+
+vim.opt.tabstop = 4 -- A TAB character looks like 4 spaces
+vim.opt.expandtab = true -- Pressing the TAB key will insert spaces instead of a TAB character
+vim.opt.softtabstop = 4 -- Number of spaces inserted instead of a TAB character
+vim.opt.shiftwidth = 4 -- Number of spaces inserted when indenting
 
 -- Sync clipboard between OS and Neovim.
 --  Schedule the setting after `UiEnter` because it can increase startup-time.
@@ -174,6 +179,9 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+
+-- My Custom Keymaps
+vim.keymap.set('i', ';;', '<Esc>', { desc = 'Exit insert mode' })
 
 -- TIP: Disable arrow keys in normal mode
 -- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
@@ -607,6 +615,10 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         gopls = {},
+        astro = {},
+        cssls = {},
+        html = {},
+        tailwindcss = {},
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -888,7 +900,25 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = {
+        'astro',
+        'bash',
+        'c',
+        'css',
+        'diff',
+        'go',
+        'html',
+        'javascript',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'tsx',
+        'typescript',
+        'vim',
+        'vimdoc',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -985,6 +1015,54 @@ end)
 vim.keymap.set('n', '<C-S-N>', function()
   harpoon:list():next()
 end)
+
+require('typescript-tools').setup {
+  on_attach = function() end,
+  handlers = {},
+  settings = {
+    -- spawn additional tsserver instance to calculate diagnostics on it
+    separate_diagnostic_server = true,
+    -- "change"|"insert_leave" determine when the client asks the server about diagnostic
+    publish_diagnostic_on = 'insert_leave',
+    -- array of strings("fix_all"|"add_missing_imports"|"remove_unused"|
+    -- "remove_unused_imports"|"organize_imports") -- or string "all"
+    -- to include all supported code actions
+    -- specify commands exposed as code_actions
+    expose_as_code_action = {},
+    -- string|nil - specify a custom path to `tsserver.js` file, if this is nil or file under path
+    -- not exists then standard path resolution strategy is applied
+    tsserver_path = nil,
+    -- specify a list of plugins to load by tsserver, e.g., for support `styled-components`
+    -- (see 💅 `styled-components` support section)
+    tsserver_plugins = {},
+    -- this value is passed to: https://nodejs.org/api/cli.html#--max-old-space-sizesize-in-megabytes
+    -- memory limit in megabytes or "auto"(basically no limit)
+    tsserver_max_memory = 'auto',
+    -- described below
+    tsserver_format_options = {},
+    tsserver_file_preferences = {},
+    -- locale of all tsserver messages, supported locales you can find here:
+    -- https://github.com/microsoft/TypeScript/blob/3c221fc086be52b19801f6e8d82596d04607ede6/src/compiler/utilitiesPublic.ts#L620
+    tsserver_locale = 'en',
+    -- mirror of VSCode's `typescript.suggest.completeFunctionCalls`
+    complete_function_calls = false,
+    include_completions_with_insert_text = true,
+    -- CodeLens
+    -- WARNING: Experimental feature also in VSCode, because it might hit performance of server.
+    -- possible values: ("off"|"all"|"implementations_only"|"references_only")
+    code_lens = 'off',
+    -- by default code lenses are displayed on all referencable values and for some of you it can
+    -- be too much this option reduce count of them by removing member references from lenses
+    disable_member_code_lens = true,
+    -- JSXCloseTag
+    -- WARNING: it is disabled by default (maybe you configuration or distro already uses nvim-ts-autotag,
+    -- that maybe have a conflict if enable this feature. )
+    jsx_close_tag = {
+      enable = false,
+      filetypes = { 'javascriptreact', 'typescriptreact' },
+    },
+  },
+}
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

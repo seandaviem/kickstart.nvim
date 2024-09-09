@@ -8,4 +8,9 @@ return {
     branch = 'harpoon2',
     dependencies = { 'nvim-lua/plenary.nvim' },
   },
+  {
+    'pmizio/typescript-tools.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
+    opts = {},
+  },
 }
