@@ -13,4 +13,9 @@ return {
     dependencies = { 'nvim-lua/plenary.nvim', 'neovim/nvim-lspconfig' },
     opts = {},
   },
+  -- MDX syntax highlighting
+  {
+    'jxnblk/vim-mdx-js',
+    ft = 'mdx',
+  },
 }
