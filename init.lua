@@ -212,6 +212,26 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Limit markdown and mdx files to have a width of 80
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'markdown', 'mdx', 'markdown.mdx' },
+  callback = function()
+    vim.opt_local.textwidth = 80
+
+    vim.opt_local.formatoptions:append 't'
+    vim.opt_local.formatoptions:append 'c'
+
+    -- vim.api.nvim_create_autocmd('BufWritePre', {
+    -- buffer = 0, -- Apply to the current buffer
+    -- callback = function()
+    -- local view = vim.fn.winsaveview()
+    -- vim.cmd 'normal! gggqG'
+    -- vim.fn.winrestview(view)
+    -- end,
+    -- })
+  end,
+})
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -619,6 +639,8 @@ require('lazy').setup({
         cssls = {},
         html = {},
         tailwindcss = {},
+        mdx_analyzer = {},
+        marksman = {},
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
